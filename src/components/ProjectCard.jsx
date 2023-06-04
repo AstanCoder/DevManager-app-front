@@ -19,14 +19,19 @@ import services from "../services/services";
 import { enqueueSnackbar } from "notistack";
 import Alert from "./Alert";
 import { useQueryClient } from "react-query";
+import TaskModal from "./modals/TaskModal";
 
 function ProjectCard({ id, name, client_name, date, description, status }) {
   const [project_id, setProject_id] = useState(null);
 
-
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isTaskOpen,
+    onOpen: openTask,
+    onClose: closeTask,
+  } = useDisclosure();
 
   let project_status_label;
   let project_status_color;
@@ -69,7 +74,7 @@ function ProjectCard({ id, name, client_name, date, description, status }) {
             persist: false,
             variant: "success",
           });
-          queryClient.invalidateQueries("projects")
+          queryClient.invalidateQueries("projects");
         })
         .catch((err) => {
           enqueueSnackbar("Ha ocurrido un error al borrar el proyecto", {
@@ -84,8 +89,23 @@ function ProjectCard({ id, name, client_name, date, description, status }) {
     }
   };
 
+  const handleOpenTasks = (id) => {
+    setProject_id(id);
+    openTask();
+  };
+
+  const handleCloseTasks = () => {
+    closeTask();
+    setProject_id(null);
+  };
+
   return (
     <>
+      <TaskModal
+        isOpen={isTaskOpen}
+        onClose={handleCloseTasks}
+        id={project_id}
+      />
       <Card size="lg" maxW="20rem" maxH="30rem" pt="2">
         <Heading m="auto" size="lg">
           {name}
@@ -126,6 +146,7 @@ function ProjectCard({ id, name, client_name, date, description, status }) {
                 variant="ghost"
                 leftIcon={<CalendarIcon />}
                 colorScheme="blue"
+                onClick={() => handleOpenTasks(id)}
               >
                 Tareas
               </Button>

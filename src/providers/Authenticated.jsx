@@ -13,7 +13,6 @@ const Authenticated = ({ children, homePath, loginPath }) => {
   const isAuthenticated = !!authenticatedUser;
   const pathIsProtected =
     location.pathname !== "/signup" && location.pathname !== "/signin";
-  
 
   useEffect(() => {
     // Redirects to login if user is not authenticated and the route is protected
@@ -22,10 +21,10 @@ const Authenticated = ({ children, homePath, loginPath }) => {
     }
 
     // Redirects to home path if user is authenticated and the route is not protected
-    if (isAuthenticated ) {
+    if (isAuthenticated) {
       navigate(homePath);
     }
-  }, [isValidating, isAuthenticated]);
+  }, [isAuthenticated]);
 
   if (isValidating) {
     return <Spinner />;

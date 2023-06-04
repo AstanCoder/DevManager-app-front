@@ -55,6 +55,29 @@ const createProject = async (values) => {
   return await instance.post("/project", values);
 };
 
+const createTask = async (id, values) => {
+  return await instance.post(`/project/${id}/task`, values);
+};
+
+const listTask = async ({ queryKey }) => {
+  const [_, id] = queryKey;
+
+  if (!id) {
+    return null;
+  }
+  return await instance
+    .get(`/project/${id}/task/list`)
+    .then((data) => data?.data?.results);
+};
+
+const listUser = async () => {
+  return await instance.get("/user/list").then((data) => data?.data?.results);
+};
+
+const deleteUser = async (id) => {
+  return await instance.delete(`/user/${id}`);
+};
+
 const services = {
   getProfile,
   listTeams,
@@ -65,6 +88,10 @@ const services = {
   listClients,
   createClient,
   createProject,
+  createTask,
+  listTask,
+  listUser,
+  deleteUser,
 };
 
 export default services;

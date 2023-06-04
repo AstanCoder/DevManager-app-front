@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [currentPass, setCurrentPassUser] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
-  const [isOrganization, setIsOrganization] = useState(false);
+  
 
   useEffect(() => {
     const sessionUser = getCurrentUser();
@@ -35,7 +35,7 @@ const AuthProvider = ({ children }) => {
       .catch((error) => {
         setIsValidating(false);
       });
-  }, [isOrganization]);
+  }, []);
 
   const login = async (values) => {
     await authenticate(values).then(async (cUser) => {
@@ -67,7 +67,7 @@ const AuthProvider = ({ children }) => {
         logout,
         user,
         currentPass,
-        setIsOrganization,
+        
       }}
     >
       {children}

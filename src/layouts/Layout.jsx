@@ -33,15 +33,21 @@ import {
   FiChevronDown,
   FiUser,
   FiArchive,
+  FiCode,
 } from "react-icons/fi";
 import { AddIcon } from "@chakra-ui/icons";
+import { useAuth } from "../providers/Provider";
+import Cookies from "js-cookie";
 
 const LinkItems = [
   { name: "Proyectos", icon: FiArchive, route: 0 },
   { name: "Clientes", icon: FiUser, route: 1 },
+  { name: "Desarrolladores", icon: FiCode, route: 2 },
 ];
 
 export default function Layout({ children, title, setSelectedPage }) {
+  const { user, logout } = useAuth();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
@@ -69,7 +75,7 @@ export default function Layout({ children, title, setSelectedPage }) {
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} title={title} />
+      <MobileNav onOpen={onOpen} user={user} logout={logout} title={title} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>
@@ -151,7 +157,7 @@ const NavItem = ({ setSelectedPage, icon, route, children, ...rest }) => {
   );
 };
 
-const MobileNav = ({ onOpen, title, ...rest }) => {
+const MobileNav = ({ onOpen, user, logout, title, ...rest }) => {
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -197,21 +203,16 @@ const MobileNav = ({ onOpen, title, ...rest }) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                <Avatar size={"sm"} src={""} name={user?.nombre} />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user?.nombre || "username"}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {user?.rol || "role"}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
@@ -227,7 +228,7 @@ const MobileNav = ({ onOpen, title, ...rest }) => {
               <MenuItem>Configuración</MenuItem>
 
               <MenuDivider />
-              <MenuItem>Cerrar Sesión</MenuItem>
+              <MenuItem onClick={() => logout()}>Cerrar Sesión</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

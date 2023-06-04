@@ -1,6 +1,7 @@
 import {
   AlertDialog,
   AlertDialogBody,
+  AlertDialogCloseButton,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
@@ -15,6 +16,10 @@ function Alert({ isOpen, onClose, element_name, trigguer_delete }) {
     trigguer_delete();
     onClose();
   };
+
+  const handleClose = ()=>{
+    onClose()
+  }
   return (
     <AlertDialog
       isOpen={isOpen}
@@ -25,6 +30,7 @@ function Alert({ isOpen, onClose, element_name, trigguer_delete }) {
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
             Borrar {element_name}
+            <AlertDialogCloseButton />
           </AlertDialogHeader>
 
           <AlertDialogBody>
@@ -33,7 +39,7 @@ function Alert({ isOpen, onClose, element_name, trigguer_delete }) {
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button onClick={()=>handleClose()}>
               Cancelar
             </Button>
             <Button colorScheme="red" onClick={() => handleDelete()} ml={3}>

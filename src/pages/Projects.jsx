@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../layouts/Layout";
 import { useQuery } from "react-query";
 import services from "../services/services";
@@ -19,6 +19,8 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import ProjectForm from "../components/forms/ProjectForm";
+import TaskModal from "../components/modals/TaskModal";
+import { enqueueSnackbar } from "notistack";
 
 function Projects({ setSelectedPage }) {
   const {
