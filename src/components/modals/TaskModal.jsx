@@ -1,6 +1,10 @@
 import {
   Badge,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -19,9 +23,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import services from "../../services/services";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import TaskForm from "../forms/TaskForm";
 import { getTaskBadgeDetails } from "../../utils/getTaskBadgeDetails";
 
@@ -34,17 +38,33 @@ function TaskModal({ isOpen, onClose, id }) {
   } = useQuery(["taskList", id], services.listTask);
 
   const {
+    data: status,
+    isLoading: loadingStatus,
+    isSuccess: successStatus,
+    error: errorStatus,
+  } = useQuery(["status"], services.listTaskStatus);
+
+  console.log(status);
+
+  const {
     isOpen: isOpenForm,
     onOpen: onOpenForm,
     onClose: onCloseForm,
   } = useDisclosure();
 
+  const queryClient = useQueryClient();
 
+  const handleChangeTaskStatus = async (id, status_id) => {
+    return await services.updateTask(id, status_id).then(() => {
+      queryClient.invalidateQueries("taskList");
+    });
+  };
 
-  
-
-  
-
+  const handleDeleteTask = async (id) => {
+    return await services.deleteTask(id).then(() => {
+      queryClient.invalidateQueries("taskList");
+    });
+  };
 
   return (
     <>
@@ -72,6 +92,7 @@ function TaskModal({ isOpen, onClose, id }) {
                     <Th>Usuario asignado</Th>
                     <Th>Rol del usuario</Th>
                     <Th>Estado</Th>
+                    <Th>Acciones</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -101,7 +122,50 @@ function TaskModal({ isOpen, onClose, id }) {
                         <Td>{task?.descripcion}</Td>
                         <Td>{task?.usuario}</Td>
                         <Td>{task?.rol}</Td>
-                        <Td><Badge rounded="3xl" colorScheme={getTaskBadgeDetails(task?.estado)?.color}>{getTaskBadgeDetails(task?.estado)?.label}</Badge></Td>
+                        <Td>
+                          <Menu>
+                            <MenuButton>
+                              <Badge
+                                rounded="3xl"
+                                colorScheme={
+                                  getTaskBadgeDetails(task?.estado)?.color
+                                }
+                              >
+                                {getTaskBadgeDetails(task?.estado)?.label}
+                              </Badge>
+                            </MenuButton>
+                            <MenuList>
+                              {status?.length > 0 &&
+                                status?.map((stat) => (
+                                  <MenuItem
+                                    key={stat.id}
+                                    onClick={() =>
+                                      handleChangeTaskStatus(task?.id, stat?.id)
+                                    }
+                                  >
+                                    {" "}
+                                    <Badge
+                                      rounded="3xl"
+                                      colorScheme={
+                                        getTaskBadgeDetails(stat?.valor)?.color
+                                      }
+                                    >
+                                      {getTaskBadgeDetails(stat?.valor)?.label}
+                                    </Badge>
+                                  </MenuItem>
+                                ))}
+                            </MenuList>
+                          </Menu>
+                        </Td>
+                        <Td>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            rounded="3xl"
+                            variant="ghost"
+                            onClick={() => handleDeleteTask(task?.id)}
+                          ></IconButton>
+                        </Td>
                       </Tr>
                     ))
                   ) : (

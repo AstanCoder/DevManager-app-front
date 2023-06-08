@@ -78,6 +78,18 @@ const deleteUser = async (id) => {
   return await instance.delete(`/user/${id}`);
 };
 
+const listTaskStatus = async()=>{
+  return await instance.get("/task/status").then((data) => data?.data?.results)
+}
+
+const updateTask = async(id, status_id)=>{
+  return await instance.post(`/task/status`, {id, status_id})
+}
+
+const deleteTask = async(id)=>{
+  return await instance.delete(`/task/delete/${id}`)
+}
+
 const services = {
   getProfile,
   listTeams,
@@ -92,6 +104,10 @@ const services = {
   listTask,
   listUser,
   deleteUser,
+  listTaskStatus,
+  updateTask,
+  deleteTask
+
 };
 
 export default services;
